@@ -2,7 +2,6 @@ package com.example.dayhunter.teamvoytestproject.service;
 
 import com.example.dayhunter.teamvoytestproject.models.Good;
 import com.example.dayhunter.teamvoytestproject.models.Order;
-import com.example.dayhunter.teamvoytestproject.models.OrderItem;
 import com.example.dayhunter.teamvoytestproject.models.dto.OrderItemDto;
 import com.example.dayhunter.teamvoytestproject.models.dto.OrderRequestDto;
 import com.example.dayhunter.teamvoytestproject.repository.GoodRepository;
@@ -10,19 +9,15 @@ import com.example.dayhunter.teamvoytestproject.repository.OrderRepository;
 import com.example.dayhunter.teamvoytestproject.service.impl.OrderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

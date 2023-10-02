@@ -14,6 +14,7 @@ import static org.mockito.Mockito.*;
 import com.example.dayhunter.teamvoytestproject.models.Good;
 import com.example.dayhunter.teamvoytestproject.models.dto.GoodDto;
 import com.example.dayhunter.teamvoytestproject.models.dto.GoodRequestDto;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 

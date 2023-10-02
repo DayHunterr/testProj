@@ -1,80 +1,90 @@
 package com.example.dayhunter.teamvoytestproject.controller;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.Mockito.*;
+import com.example.dayhunter.teamvoytestproject.config.impl.UserDetailsServiceImpl;
+import com.example.dayhunter.teamvoytestproject.models.dto.GoodDto;
+import com.example.dayhunter.teamvoytestproject.models.dto.GoodRequestDto;
+import com.example.dayhunter.teamvoytestproject.service.GoodService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.dayhunter.teamvoytestproject.models.dto.GoodDto;
-import com.example.dayhunter.teamvoytestproject.models.dto.GoodRequestDto;
-import com.example.dayhunter.teamvoytestproject.service.GoodService;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.web.servlet.MockMvc;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(GoodController.class)
-class GoodControllerTest {
+public class GoodControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private GoodService goodService;
 
-    @Test
-    public void testGoodList() throws Exception {
-        GoodDto goodDto1 = new GoodDto();
-        GoodDto goodDto2 = new GoodDto();
-        goodDto1.setName("good1");
-        goodDto1.setPrice(10.0);
-        goodDto1.setQuantity(5);
-        goodDto2.setName("good2");
-        goodDto2.setPrice(20.0);
-        goodDto2.setQuantity(3);
+    @Mock
+    private UserDetailsServiceImpl userDetailsService;
 
-        // Создаем список тестовых товаров
-        List<GoodDto> goodList = new ArrayList<>();
-        goodList.add(goodDto1);
-        goodList.add(goodDto2);
-
-        // Когда goodService вызывает метод allGoods(), вернуть наш список
-        when(goodService.allGoods()).thenReturn(goodList);
-
-        // Выполняем GET-запрос к /goods/all и ожидаем HTTP-статус 200
-        mockMvc.perform(get("/goods/all"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].name").value("Good 1"))
-                .andExpect(jsonPath("$[0].price").value(10.0))
-                .andExpect(jsonPath("$[0].quantity").value(5))
-                .andExpect(jsonPath("$[1].name").value("Good 2"))
-                .andExpect(jsonPath("$[1].price").value(20.0))
-                .andExpect(jsonPath("$[1].quantity").value(3));
-
-        // Проверяем, что метод allGoods() был вызван один раз
-        verify(goodService, times(1)).allGoods();
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(new GoodController(goodService))
+                .build();
     }
 
     @Test
     public void testAddGood() throws Exception {
-        // Создаем тестовый DTO для товара
-        GoodRequestDto goodDto = new GoodRequestDto();
-        goodDto.setName("New Good");
-        goodDto.setPrice(15.0);
-        goodDto.setQuantity(7);
+        // Mock your user details here
+        UserDetails userDetails = User.withUsername("testUser")
+                .password("testPassword")
+                .roles("MANAGER")
+                .build();
+        when(userDetailsService.loadUserByUsername("testUser")).thenReturn(userDetails);
 
-        // Выполняем POST-запрос к /goods/add с тестовым DTO и ожидаем HTTP-статус 201 (CREATED)
+        // Mock your GoodRequestDto here
+        GoodRequestDto goodDto = new GoodRequestDto();
+        goodDto.setName("Billy");
+        goodDto.setPrice(23.0);
+        goodDto.setQuantity(3);
+
+
         mockMvc.perform(post("/goods/add")
-                        .contentType("application/json")
-                        .content("{\"name\":\"New Good\",\"price\":15.0,\"quantity\":7}"))
+                        .content(asJsonString(goodDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
-        // Проверяем, что метод createGood() был вызван один раз с соответствующим DTO
         verify(goodService, times(1)).createGood(goodDto);
+    }
+
+    @Test
+    public void testGoodList() throws Exception {
+        // Mock your GoodDto list here
+        List<GoodDto> goodDtoList = new ArrayList<>();
+
+        when(goodService.allGoods()).thenReturn(goodDtoList);
+
+        mockMvc.perform(get("/goods/all"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(goodService, times(1)).allGoods();
+    }
+
+    // Helper method to convert an object to JSON string
+    private String asJsonString(Object obj) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

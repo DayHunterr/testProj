@@ -1,6 +1,7 @@
 package com.example.dayhunter.teamvoytestproject.repository;
 
 import com.example.dayhunter.teamvoytestproject.models.BaseUser;
+import com.example.dayhunter.teamvoytestproject.models.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -22,7 +23,10 @@ class UserRepositoryTest {
         public void testFindByEmail() {
             // Создаем тестового пользователя и сохраняем его в базе данных
             BaseUser user = new BaseUser();
+            user.setRole(Role.ROLE_MANAGER);
             user.setEmail("test@example.com");
+            user.setName("Test1");
+            user.setPassword("password");
             entityManager.persistAndFlush(user);
 
             // Ищем пользователя по email
