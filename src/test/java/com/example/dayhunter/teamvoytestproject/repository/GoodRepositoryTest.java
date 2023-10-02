@@ -13,10 +13,8 @@ class GoodRepositoryTest {
 
     @Autowired
     private GoodRepository goodRepository;
-
     @Test
     void findAll() {
-        // Создаем и сохраняем тестовые объекты с явными идентификаторами
         Good good1 = new Good();
         good1.setId(1L);
         good1.setName("Good 1");
@@ -30,11 +28,7 @@ class GoodRepositoryTest {
         good2.setPrice(20.0);
         good2.setQuantity(3);
         goodRepository.save(good2);
-
-        // Вызов метода findAll
         List<Good> result = goodRepository.findAll();
-
-        // Проверка, что результат содержит два элемента в любом порядке
         assertThat(result.contains(good1));
         assertThat(result.contains(good2));
     }

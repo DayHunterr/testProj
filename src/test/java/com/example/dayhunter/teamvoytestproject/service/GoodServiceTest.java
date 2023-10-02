@@ -14,7 +14,6 @@ import static org.mockito.Mockito.*;
 import com.example.dayhunter.teamvoytestproject.models.Good;
 import com.example.dayhunter.teamvoytestproject.models.dto.GoodDto;
 import com.example.dayhunter.teamvoytestproject.models.dto.GoodRequestDto;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,12 +21,10 @@ class GoodServiceTest {
 
     @InjectMocks
     private GoodServiceImpl goodService;
-
     @Mock
     private GoodRepository goodRepository;
     @Mock
     private GoodMapper goodMapper;
-
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -41,14 +38,11 @@ class GoodServiceTest {
         goodRequestDto.setPrice(10.0);
         goodRequestDto.setQuantity(5);
 
-        // Создайте мок объект Good
         Good mockGood = new Good();
         when(goodRepository.save(any())).thenReturn(mockGood);
 
-        // Вызов метода createGood
         goodService.createGood(goodRequestDto);
 
-        // Проверка, что метод save был вызван один раз
         verify(goodRepository, times(1)).save(any());
     }
 
@@ -70,13 +64,10 @@ class GoodServiceTest {
 
         when(goodRepository.findAll()).thenReturn(mockGoods);
 
-        // Вызов метода allGoods
         List<GoodDto> result = goodService.allGoods();
 
-        // Проверка, что метод findAll был вызван один раз
         verify(goodRepository, times(1)).findAll();
 
-        // Проверка, что результат содержит два элемента
         assertEquals(2, result.size());
     }
 }
